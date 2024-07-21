@@ -1,0 +1,45 @@
+[package]
+name = "candle_llama_inference"
+version = "0.2.0"
+edition = "2021"
+
+[dependencies]
+tokio = { version = "1", features = ["full"] }
+simple_logger = "1.11"
+rand = "0.8"
+toml = "0.5"
+log = "0.4"
+
+async-std = { version = "1.8.0", features = ["attributes"] }
+tide = "0.16"
+
+rustyline = { version = "11.0.0", features = ["derive"] }
+clap = { version = "4.1.8", features = ["derive"] }
+
+hf-hub = "0.3.2"
+candle-core = { git = "https://github.com/huggingface/candle.git", version = "0.5.1", features = ["cuda"]}
+candle-nn = { git = "https://github.com/huggingface/candle.git", version = "0.5.1", features = ["cuda"] }
+anyhow = "1.0.86"
+serde = "1.0.203"
+
+tokenizers = {version = "0.19.1", features = ["onig"]}
+serde_json = "1.0.117"
+tracing-subscriber = "0.3.18"
+tracing-chrome = "0.7.2"
+intel-mkl-src = {version = "0.8.1", optional = true}
+candle-transformers = { git = "https://github.com/huggingface/candle.git", version = "0.5.1" }
+cudarc = {version = "0.11.2", features = ["cuda-version-from-build-system"]}
+half = {version = "2.4.1", optional = true}
+
+[build-dependencies]
+anyhow = "1.0.86"
+bindgen_cuda = { version = "0.1.1", optional = true }
+log = "0.4"
+
+[features]
+default = []
+accelerate = ["candle-core/accelerate", "candle-nn/accelerate", "candle-transformers/accelerate"]
+cuda = ["candle-core/cuda", "candle-nn/cuda", "candle-transformers/cuda", "dep:bindgen_cuda"]
+mkl = ["dep:intel-mkl-src", "candle-core/mkl", "candle-nn/mkl", "candle-transformers/mkl"]
+nccl = ["cuda", "cudarc/nccl", "dep:half"]
+metal = ["candle-core/metal", "candle-nn/metal"]
